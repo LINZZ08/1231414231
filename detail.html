@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高速公路广告牌管理系统 - 详情</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      color: #1890ff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+
+    .detail-hero {
+      background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+      color: #fff;
+      border-radius: 6px;
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+
+    .detail-hero h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .detail-hero .hero-location {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .detail-hero .hero-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .hero-meta-item span {
+      opacity: 0.7;
+    }
+
+    .price-highlight {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffd666;
+      margin-top: 12px;
+    }
+
+    .price-highlight small {
+      font-size: 14px;
+      font-weight: normal;
+      opacity: 0.8;
+    }
+
+    .description-box {
+      background: #f5faff;
+      border-left: 3px solid #1890ff;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .contact-card {
+      background: #fafafa;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .contact-card .contact-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .contact-card .contact-phone {
+      font-size: 14px;
+      color: #1890ff;
+    }
+
+    .contract-timeline {
+      border-left: 2px solid #e6f4ff;
+      padding-left: 20px;
+    }
+
+    .contract-item {
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    .contract-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1890ff;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #1890ff;
+    }
+
+    .contract-item .contract-date {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .contract-item .contract-desc {
+      font-size: 14px;
+      color: #333;
+      margin-top: 4px;
+    }
+
+    .error-page {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .error-page .err-code {
+      font-size: 64px;
+      color: #1890ff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">广告牌管理系统</div>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">📊 统计看板</a></li>
+        <li><a href="billboards.html" class="active">📍 广告牌列表</a></li>
+        <li><a href="#">👥 客户管理</a></li>
+        <li><a href="#">📄 合同管理</a></li>
+        <li><a href="#">⚙️ 系统设置</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <a href="billboards.html" class="back-btn">← 返回列表</a>
+    </div>
+
+    <div id="detailContent"></div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script>
+    function getParam(name) {
+      var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) return decodeURIComponent(r[2]);
+      return '';
+    }
+
+    function getStatusTag(status) {
+      var cls = 'status-tag ';
+      if (status === '在租') cls += 'status-active';
+      else if (status === '待租') cls += 'status-pending';
+      else if (status === '维修') cls += 'status-maintenance';
+      else cls += 'status-offline';
+      return '<span class="' + cls + '">' + status + '</span>';
+    }
+
+    function formatPrice(p) {
+      if (!p) return '-';
+      return '¥' + p.toLocaleString();
+    }
+
+    var id = parseInt(getParam('id'), 10);
+    var item = BILLBOARDS.find(function(b) { return b.id === id; });
+    var container = document.getElementById('detailContent');
+
+    if (!item) {
+      container.innerHTML = '<div class="error-page">' +
+        '<div class="err-code">404</div>' +
+        '<p>没有找到编号为 ' + id + ' 的广告牌</p>' +
+        '<a href="billboards.html" class="btn" style="margin-top:20px;">返回列表</a>' +
+      '</div>';
+    } else {
+      container.innerHTML =
+        '<div class="detail-hero">' +
+          '<h2>' + item.name + '</h2>' +
+          '<div class="hero-location">📍 ' + item.location + '</div>' +
+          '<div class="hero-meta">' +
+            '<div class="hero-meta-item"><span>规格：</span>' + item.size + '</div>' +
+            '<div class="hero-meta-item"><span>方向：</span>' + item.direction + '</div>' +
+            '<div class="hero-meta-item"><span>类型：</span>' + item.type + '</div>' +
+            '<div class="hero-meta-item"><span>状态：</span>' + getStatusTag(item.status) + '</div>' +
+          '</div>' +
+          '<div class="price-highlight">' + formatPrice(item.price) + '<small> / 年</small></div>' +
+        '</div>' +
+
+        '<div class="detail-grid">' +
+          '<div class="card detail-section">' +
+            '<h3>基本信息</h3>' +
+            '<ul class="info-list">' +
+              '<li><span class="label">编号</span><span class="value">#' + String(item.id).padStart(4, '0') + '</span></li>' +
+              '<li><span class="label">名称</span><span class="value">' + item.name + '</span></li>' +
+              '<li><span class="label">位置</span><span class="value">' + item.location + '</span></li>' +
+              '<li><span class="label">规格尺寸</span><span class="value">' + item.size + '</span></li>' +
+              '<li><span class="label">立柱类型</span><span class="value">' + item.type + '</span></li>' +
+              '<li><span class="label">朝向</span><span class="value">' + item.direction + '</span></li>' +
+              '<li><span class="label">所在城市</span><span class="value">' + item.city + '</span></li>' +
+              '<li><span class="label">所属高速</span><span class="value">' + item.highway + '</span></li>' +
+              '<li><span class="label">当前状态</span><span class="value">' + getStatusTag(item.status) + '</span></li>' +
+            '</ul>' +
+            '<h3 style="margin-top:24px;">项目描述</h3>' +
+            '<div class="description-box">' + item.description + '</div>' +
+          '</div>' +
+
+          '<div>' +
+            '<div class="card detail-section">' +
+              '<h3>合同与租赁</h3>' +
+              '<ul class="info-list">' +
+                '<li><span class="label">租赁价格</span><span class="value" style="color:#ff4d4f;font-weight:bold;">' + formatPrice(item.price) + '/年</span></li>' +
+                '<li><span class="label">起租日期</span><span class="value">' + (item.startDate || '暂无') + '</span></li>' +
+                '<li><span class="label">到期日期</span><span class="value">' + (item.endDate || '暂无') + '</span></li>' +
+              '</ul>' +
+            '</div>' +
+
+            '<div class="card detail-section">' +
+              '<h3>负责人信息</h3>' +
+              '<div class="contact-card">' +
+                '<div class="contact-name">' + item.owner + '</div>' +
+                '<div class="contact-phone">📞 ' + item.contact + '</div>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="card detail-section">' +
+              '<h3>合同时间线</h3>' +
+              '<div class="contract-timeline">' +
+                '<div class="contract-item">' +
+                  '<div class="contract-date">合同生效</div>' +
+                  '<div class="contract-desc">' + (item.startDate || '—') + '</div>' +
+                '</div>' +
+                '<div class="contract-item">' +
+                  '<div class="contract-date">合同到期</div>' +
+                  '<div class="contract-desc">' + (item.endDate || '—') + '</div>' +
+                '</div>' +
+                '<div class="contract-item">' +
+                  '<div class="contract-date">当前状态</div>' +
+                  '<div class="contract-desc">' + getStatusTag(item.status) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="text-align:center;margin-top:24px;">' +
+          '<button class="btn" onclick="alert(\'编辑功能（实验演示用）\')">编辑广告牌</button> ' +
+          '<a href="billboards.html" class="btn btn-default">返回列表</a>' +
+        '</div>';
+    }
+  </script>
+</body>
+</html>

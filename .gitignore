@@ -1,0 +1,7 @@
+docx_temp/
+guide*.txt
+temp.zip
+*.docx
+.DS_Store
+Thumbs.db
+__pycache__/
